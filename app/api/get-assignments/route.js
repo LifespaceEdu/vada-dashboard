@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
+import { Redis } from '@upstash/redis'
 
-// This endpoint will be called by Vada app to get assignment instructions
+const redis = Redis.fromEnv()
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -10,14 +12,14 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Code is required' }, { status: 400 })
     }
 
-    // TODO: Replace with actual storage lookup
-    // For now, this won't work until we add Vercel KV or database
-    // But it shows the structure Vada will use
+    const upperCode = code.toUpperCase()
+    const assignment = await redis.get(`assignment:${upperCode}`)
 
-    return NextResponse.json(
-      { error: 'Assignment not found' },
-      { status: 404 }
-    )
+    if (!assignment) {
+      return NextResponse.json({ error: 'Assignment not found' }, { status: 404 })
+    }
+
+    return NextResponse.json(assignment)
   } catch (error) {
     console.error('Get assignment error:', error)
     return NextResponse.json(
