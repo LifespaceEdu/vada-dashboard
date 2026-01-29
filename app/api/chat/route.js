@@ -28,7 +28,7 @@ Be concise, practical, and focused on helping teachers create better learning ex
           { role: 'system', content: systemPrompt },
           ...messages,
         ],
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         temperature: 0.7,
         max_tokens: 800,
       }),
