@@ -6,12 +6,32 @@ import TeacherChat from '@/components/TeacherChat'
 
 export default function Dashboard() {
   const [activeView, setActiveView] = useState('create')
-  const [assignments, setAssignments] = useState([])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const switchView = (view) => {
+    setActiveView(view)
+    setMobileMenuOpen(false)
+  }
 
   return (
     <div className="app">
       <header className="header">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{
+            display: 'none',
+            background: 'transparent',
+            border: '1px solid var(--border)',
+            borderRadius: '8px',
+            padding: '8px 12px',
+            color: 'var(--text)',
+            cursor: 'pointer',
+          }}
+          className="mobile-menu-btn"
+        >
+          ☰ Menu
+        </button>
         <div>
           <h1 className="header-title">Vada Dashboard</h1>
         </div>
@@ -19,23 +39,23 @@ export default function Dashboard() {
       </header>
 
       <div className="layout">
-        <nav className="nav">
+        <nav className={`nav ${mobileMenuOpen ? 'nav-mobile-open' : ''}`}>
           <div className="nav-title">Menu</div>
           <button
             className={`nav-item ${activeView === 'create' ? 'active' : ''}`}
-            onClick={() => setActiveView('create')}
+            onClick={() => switchView('create')}
           >
             Create Assignment
           </button>
           <button
             className={`nav-item ${activeView === 'manage' ? 'active' : ''}`}
-            onClick={() => setActiveView('manage')}
+            onClick={() => switchView('manage')}
           >
             Manage Assignments
           </button>
           <button
             className={`nav-item ${activeView === 'help' ? 'active' : ''}`}
-            onClick={() => setActiveView('help')}
+            onClick={() => switchView('help')}
           >
             AI Assistant
           </button>
