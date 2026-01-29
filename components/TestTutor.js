@@ -16,7 +16,7 @@ export default function TestTutor({ initialCode, onBack }) {
 
   return (
     <div className="section-card">
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom:  '20px'
         <button
           onClick={onBack}
           style={{
