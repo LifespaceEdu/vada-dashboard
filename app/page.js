@@ -3,15 +3,22 @@ import { useState } from 'react'
 import AssignmentForm from '@/components/AssignmentForm'
 import AssignmentList from '@/components/AssignmentList'
 import TeacherChat from '@/components/TeacherChat'
+import TestTutor from '@/components/TestTutor'
 
 export default function Dashboard() {
   const [activeView, setActiveView] = useState('create')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [testCode, setTestCode] = useState('')
 
   const switchView = (view) => {
     setActiveView(view)
     setMobileMenuOpen(false)
+  }
+
+  const testAssignment = (code) => {
+    setTestCode(code)
+    setActiveView('student')
   }
 
   return (
@@ -54,6 +61,12 @@ export default function Dashboard() {
             Manage Assignments
           </button>
           <button
+            className={`nav-item ${activeView === 'student' ? 'active' : ''}`}
+            onClick={() => switchView('student')}
+          >
+            Student View
+          </button>
+          <button
             className={`nav-item ${activeView === 'help' ? 'active' : ''}`}
             onClick={() => switchView('help')}
           >
@@ -75,6 +88,14 @@ export default function Dashboard() {
             <AssignmentList 
               refreshTrigger={refreshTrigger}
               onCreateNew={() => setActiveView('create')}
+              onTest={testAssignment}
+            />
+          )}
+
+          {activeView === 'student' && (
+            <TestTutor 
+              initialCode={testCode}
+              onBack={() => setActiveView('manage')}
             />
           )}
           
