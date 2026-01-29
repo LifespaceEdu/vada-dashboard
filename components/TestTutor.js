@@ -53,7 +53,7 @@ export default function TestTutor({ initialCode, onBack }) {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/student-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
