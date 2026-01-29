@@ -2,11 +2,12 @@
 import { useState } from 'react'
 import AssignmentForm from '@/components/AssignmentForm'
 import AssignmentList from '@/components/AssignmentList'
-import FloatingChat from '@/components/FloatingChat'
+import TeacherChat from '@/components/TeacherChat'
 
 export default function Dashboard() {
   const [activeView, setActiveView] = useState('create')
   const [assignments, setAssignments] = useState([])
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   return (
     <div className="app">
@@ -32,25 +33,36 @@ export default function Dashboard() {
           >
             Manage Assignments
           </button>
+          <button
+            className={`nav-item ${activeView === 'help' ? 'active' : ''}`}
+            onClick={() => setActiveView('help')}
+          >
+            AI Assistant
+          </button>
         </nav>
 
         <main className="content">
           {activeView === 'create' && (
             <AssignmentForm 
               onSave={(assignment) => {
-                setAssignments([...assignments, assignment])
+                setRefreshTrigger(prev => prev + 1)
                 setActiveView('manage')
               }}
             />
           )}
           
           {activeView === 'manage' && (
-            <AssignmentList assignments={assignments} />
+            <AssignmentList 
+              refreshTrigger={refreshTrigger}
+              onCreateNew={() => setActiveView('create')}
+            />
+          )}
+          
+          {activeView === 'help' && (
+            <TeacherChat />
           )}
         </main>
       </div>
-
-      <FloatingChat />
     </div>
   )
 }
