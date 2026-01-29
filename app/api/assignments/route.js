@@ -1,11 +1,29 @@
 import { NextResponse } from 'next/server'
+import { Redis } from '@upstash/redis'
 
-// In-memory storage for demo (replace with Vercel KV or database later)
-let assignments = []
+const redis = Redis.fromEnv()
 
 // GET - Fetch all assignments
 export async function GET(request) {
-  return NextResponse.json(assignments)
+  try {
+    const keys = await redis.keys('assignment:*')
+    const assignments = []
+    
+    for (const key of keys) {
+      const assignment = await redis.get(key)
+      if (assignment) {
+        assignments.push(assignment)
+      }
+    }
+    
+    return NextResponse.json(assignments)
+  } catch (error) {
+    console.error('Get assignments error:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch assignments' },
+      { status: 500 }
+    )
+  }
 }
 
 // POST - Create new assignment
@@ -20,8 +38,11 @@ export async function POST(request) {
       )
     }
 
+    const upperCode = code.toUpperCase()
+    
     // Check if code already exists
-    if (assignments.find((a) => a.code === code.toUpperCase())) {
+    const exists = await redis.exists(`assignment:${upperCode}`)
+    if (exists) {
       return NextResponse.json(
         { error: 'Code already exists' },
         { status: 409 }
@@ -29,12 +50,12 @@ export async function POST(request) {
     }
 
     const assignment = {
-      code: code.toUpperCase(),
+      code: upperCode,
       instructions,
       createdAt: new Date().toISOString(),
     }
 
-    assignments.push(assignment)
+    await redis.set(`assignment:${upperCode}`, assignment)
 
     return NextResponse.json(assignment, { status: 201 })
   } catch (error) {
@@ -56,10 +77,10 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Code is required' }, { status: 400 })
     }
 
-    const initialLength = assignments.length
-    assignments = assignments.filter((a) => a.code !== code.toUpperCase())
+    const upperCode = code.toUpperCase()
+    const result = await redis.del(`assignment:${upperCode}`)
 
-    if (assignments.length === initialLength) {
+    if (result === 0) {
       return NextResponse.json({ error: 'Assignment not found' }, { status: 404 })
     }
 
