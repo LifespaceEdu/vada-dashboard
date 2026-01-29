@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import AssignmentForm from '@/components/AssignmentForm'
 import AssignmentList from '@/components/AssignmentList'
-import TeacherChat from '@/components/TeacherChat'
+import FloatingChat from '@/components/FloatingChat'
 
 export default function Dashboard() {
   const [activeView, setActiveView] = useState('create')
@@ -32,12 +32,6 @@ export default function Dashboard() {
           >
             Manage Assignments
           </button>
-          <button
-            className={`nav-item ${activeView === 'help' ? 'active' : ''}`}
-            onClick={() => setActiveView('help')}
-          >
-            AI Assistant
-          </button>
         </nav>
 
         <main className="content">
@@ -53,12 +47,10 @@ export default function Dashboard() {
           {activeView === 'manage' && (
             <AssignmentList assignments={assignments} />
           )}
-          
-          {activeView === 'help' && (
-            <TeacherChat />
-          )}
         </main>
       </div>
+
+      <FloatingChat />
     </div>
   )
 }
