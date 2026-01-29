@@ -38,4 +38,15 @@ Be concise, practical, and focused on helping teachers create better learning ex
       throw new Error('API request failed')
     }
 
-    cons
+    const data = await response.json()
+    const assistantMessage = data.choices[0].message.content
+
+    return NextResponse.json({ message: assistantMessage })
+  } catch (error) {
+    console.error('Chat error:', error)
+    return NextResponse.json(
+      { error: 'Failed to process chat request' },
+      { status: 500 }
+    )
+  }
+}
