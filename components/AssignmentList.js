@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 
-export default function AssignmentList({ refreshTrigger, onCreateNew }) {
+export default function AssignmentList({ refreshTrigger, onCreateNew, onTest }) {
   const [assignments, setAssignments] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -168,7 +168,21 @@ export default function AssignmentList({ refreshTrigger, onCreateNew }) {
                 Created: {new Date(assignment.createdAt).toLocaleDateString()}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => onTest(assignment.code)}
+                style={{
+                  background: 'var(--accent)',
+                  border: 'none',
+                  borderRadius: '999px',
+                  padding: '6px 14px',
+                  color: '#020617',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                }}
+              >
+                Test
+              </button>
               <button
                 onClick={() => copyCode(assignment.code)}
                 style={{
